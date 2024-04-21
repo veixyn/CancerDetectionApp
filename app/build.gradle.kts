@@ -51,4 +51,5 @@ dependencies {
 
 
     // TODO: Tambahkan Library TensorFlow Lite
+    implementation("org.tensorflow:tensorflow-lite-task-vision:0.4.4")
 }
