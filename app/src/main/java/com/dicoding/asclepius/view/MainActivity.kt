@@ -1,8 +1,6 @@
 package com.dicoding.asclepius.view
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,12 +8,9 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
-import com.dicoding.asclepius.R
 import com.dicoding.asclepius.databinding.ActivityMainBinding
 import com.dicoding.asclepius.helper.ImageClassifierHelper
 import org.tensorflow.lite.task.vision.classifier.Classifications
-import org.tensorflow.lite.task.vision.classifier.ImageClassifier
 import java.text.NumberFormat
 
 class MainActivity : AppCompatActivity() {
@@ -34,7 +29,7 @@ class MainActivity : AppCompatActivity() {
             currentImageUri?.let {
                 analyzeImage(it)
             } ?: run {
-                showToast("ye")
+                showToast("Please insert your image.")
             }
         }
     }
@@ -62,8 +57,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun analyzeImage(uri: Uri) {
-        // TODO: Menganalisa gambar yang berhasil ditampilkan.
         val intent = Intent(this, ResultActivity::class.java)
+        intent.putExtra(ResultActivity.EXTRA_IMAGE_URI, currentImageUri.toString())
 
         imageClassifierHelper = ImageClassifierHelper(
             context = this,
@@ -74,11 +69,10 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onResults(results: List<Classifications?>) {
-                    results.let {
-                        if (it.isNotEmpty() && it[0]?.categories!!.isNotEmpty()) {
-                            println("INI HASILNYA LHOOO")
-                            println(it)
-                            val displayResult = it[0]!!.categories.joinToString("\n") {
+                    results.let { result ->
+                        if (result.isNotEmpty() && result[0]?.categories!!.isNotEmpty()) {
+                            println(result)
+                            val displayResult = result[0]!!.categories.joinToString("\n") {
                                 "${it.label} " + NumberFormat.getPercentInstance()
                                     .format(it.score).trim()
                             }
@@ -88,15 +82,9 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         )
-        intent.putExtra(ResultActivity.EXTRA_IMAGE_URI, currentImageUri.toString())
 
         imageClassifierHelper.classifyStaticImage(uri)
 
-        startActivity(intent)
-    }
-
-    private fun moveToResult() {
-        val intent = Intent(this, ResultActivity::class.java)
         startActivity(intent)
     }
 

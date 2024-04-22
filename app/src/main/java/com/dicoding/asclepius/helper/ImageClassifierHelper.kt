@@ -3,15 +3,9 @@ package com.dicoding.asclepius.helper
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
-import android.media.Image
 import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
 import android.util.Log
-import android.widget.Toast
 import com.dicoding.asclepius.R
-import com.dicoding.asclepius.view.MainActivity
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.common.ops.CastOp
 import org.tensorflow.lite.support.image.ImageProcessor
@@ -22,7 +16,6 @@ import org.tensorflow.lite.task.core.vision.ImageProcessingOptions
 import org.tensorflow.lite.task.vision.classifier.Classifications
 import org.tensorflow.lite.task.vision.classifier.ImageClassifier
 import java.io.FileNotFoundException
-import java.io.IOException
 import java.lang.IllegalStateException
 
 
@@ -47,16 +40,12 @@ class ImageClassifierHelper(
     }
 
     private fun setupImageClassifier() {
-        // TODO: Menyiapkan Image Classifier untuk memproses gambar.
         val optionsBuilder = ImageClassifier.ImageClassifierOptions.builder()
             .setScoreThreshold(threshold)
             .setMaxResults(maxResults)
         val baseOptionsBuilder = BaseOptions.builder()
             .setNumThreads(4)
         optionsBuilder.setBaseOptions(baseOptionsBuilder.build())
-
-        val imageProcessingOptions = ImageProcessingOptions.builder()
-            .build()
 
         try {
             imageClassifier = ImageClassifier.createFromFileAndOptions(
@@ -71,7 +60,6 @@ class ImageClassifierHelper(
     }
 
     fun classifyStaticImage(imageUri: Uri) {
-        // TODO: mengklasifikasikan imageUri dari gambar statis.
         if (imageClassifier == null) {
             setupImageClassifier()
         }
